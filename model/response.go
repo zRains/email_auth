@@ -6,6 +6,7 @@ import (
 
 type Response struct {
 	Code    int    `json:"code"`
+	Succeed bool   `json:"succeed"`
 	Message string `json:"msg,omitempty"`
 	Data    any    `json:"data,omitempty"`
 }
@@ -32,32 +33,8 @@ const (
 	SUCCESS = 0
 )
 
-func Result(code int, data any, msg string, ctx *gin.Context) {
+func Result(code int, succeed bool, data any, msg string, ctx *gin.Context) {
 	ctx.JSON(Ok, Response{
-		code, msg, data,
+		code, succeed, msg, data,
 	})
-}
-
-func OkResult(ctx *gin.Context) {
-	Result(SUCCESS, nil, "操作成功", ctx)
-}
-
-func OkWithMessage(msg string, ctx *gin.Context) {
-	Result(SUCCESS, nil, msg, ctx)
-}
-
-func OkWithData(data any, ctx *gin.Context) {
-	Result(SUCCESS, data, "操作成功", ctx)
-}
-
-func FailResult(ctx *gin.Context) {
-	Result(ERROR, nil, "操作失败", ctx)
-}
-
-func FailWithMessage(msg string, ctx *gin.Context) {
-	Result(ERROR, nil, msg, ctx)
-}
-
-func FailWithData(data any, ctx *gin.Context) {
-	Result(ERROR, data, "操作失败", ctx)
 }

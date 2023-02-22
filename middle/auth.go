@@ -29,7 +29,7 @@ func TokenAuth() gin.HandlerFunc {
 				"code": model.ERROR,
 				"msg":  "Jwt format error",
 			})
-			//阻止调用后续的函数
+
 			ctx.Abort()
 			return
 		}

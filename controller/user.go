@@ -4,6 +4,7 @@ import (
 	"context"
 	"email_auth/model"
 	"email_auth/service"
+	"email_auth/util"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,7 +29,7 @@ func (this UserControllerImpl) SignUp(ctx *gin.Context) {
 	var signUpUser model.SignUpRequired
 
 	if err := ctx.ShouldBindJSON(&signUpUser); err != nil {
-		model.FailWithMessage(err.Error(), ctx)
+		model.Result(model.ERROR, false, nil, err.Error(), ctx)
 
 		return
 	}
@@ -41,19 +42,19 @@ func (this UserControllerImpl) SignUp(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		model.FailWithMessage(err.Error(), ctx)
+		model.Result(model.ERROR, false, nil, err.Error(), ctx)
 
 		return
 	}
 
-	model.OkWithData(dbResult, ctx)
+	model.Result(model.Ok, true, dbResult, "操作成功", ctx)
 }
 
 func (this UserControllerImpl) SignIn(ctx *gin.Context) {
 	var signInUser model.SignInRequired
 
 	if err := ctx.ShouldBindJSON(&signInUser); err != nil {
-		model.FailWithMessage(err.Error(), ctx)
+		model.Result(model.ERROR, false, nil, err.Error(), ctx)
 
 		return
 	}
@@ -61,10 +62,20 @@ func (this UserControllerImpl) SignIn(ctx *gin.Context) {
 	dbUser, err := this.userService.SignIn(&signInUser)
 
 	if err != nil {
-		model.FailWithMessage(err.Error(), ctx)
+		model.Result(model.ERROR, false, nil, err.Error(), ctx)
 
 		return
 	}
 
-	model.OkWithData(dbUser, ctx)
+	jwtToken, err := util.GenerateJWT(dbUser.Email)
+	if err != nil {
+		model.Result(model.ERROR, false, nil, err.Error(), ctx)
+
+		return
+	}
+
+	model.Result(model.Ok, true, gin.H{
+		"user":  dbUser,
+		"token": jwtToken,
+	}, "操作成功", ctx)
 }
