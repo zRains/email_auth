@@ -29,7 +29,7 @@ func (this UserControllerImpl) SignUp(ctx *gin.Context) {
 	var signUpUser model.SignUpRequired
 
 	if err := ctx.ShouldBindJSON(&signUpUser); err != nil {
-		model.Result(model.ERROR, false, nil, err.Error(), ctx)
+		model.ResultWithError(err, ctx)
 
 		return
 	}
@@ -42,7 +42,7 @@ func (this UserControllerImpl) SignUp(ctx *gin.Context) {
 	})
 
 	if err != nil {
-		model.Result(model.ERROR, false, nil, err.Error(), ctx)
+		model.ResultWithError(err, ctx)
 
 		return
 	}
@@ -54,7 +54,7 @@ func (this UserControllerImpl) SignIn(ctx *gin.Context) {
 	var signInUser model.SignInRequired
 
 	if err := ctx.ShouldBindJSON(&signInUser); err != nil {
-		model.Result(model.ERROR, false, nil, err.Error(), ctx)
+		model.ResultWithError(err, ctx)
 
 		return
 	}
@@ -62,14 +62,14 @@ func (this UserControllerImpl) SignIn(ctx *gin.Context) {
 	dbUser, err := this.userService.SignIn(&signInUser)
 
 	if err != nil {
-		model.Result(model.ERROR, false, nil, err.Error(), ctx)
+		model.ResultWithError(err, ctx)
 
 		return
 	}
 
 	jwtToken, err := util.GenerateJWT(dbUser.Email)
 	if err != nil {
-		model.Result(model.ERROR, false, nil, err.Error(), ctx)
+		model.ResultWithError(err, ctx)
 
 		return
 	}

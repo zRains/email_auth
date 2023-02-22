@@ -38,3 +38,7 @@ func Result(code int, succeed bool, data any, msg string, ctx *gin.Context) {
 		code, succeed, msg, data,
 	})
 }
+
+func ResultWithError(err error, ctx *gin.Context) {
+	Result(ERROR, false, nil, err.Error(), ctx)
+}
