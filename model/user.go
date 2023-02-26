@@ -10,7 +10,7 @@ type SignInRequired struct {
 type SignUpRequired struct {
 	Name     string `json:"name" binding:"required,min=2,max=10"`
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required"`
+	Password string `json:"password" binding:"required,min=10,max=25"`
 }
 
 type User struct {
